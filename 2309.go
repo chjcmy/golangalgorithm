@@ -27,7 +27,7 @@ func main() {
 	for i := 0; i < 8; i++ {
 		for j := i + 1; j < 9; j++ {
 			if heights[i]+heights[j] == sum-100 {
-				for k := 0; k < 8; k++ {
+				for k := 0; k < 9; k++ {
 					if k != i && k != j {
 						fmt.Fprintln(writer, heights[k])
 					}
