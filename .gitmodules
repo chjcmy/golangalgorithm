@@ -1,0 +1,3 @@
+[submodule "algorithm_lego"]
+	path = algorithm_lego
+	url = https://github.com/chjcmy/algorithm_lego.git
