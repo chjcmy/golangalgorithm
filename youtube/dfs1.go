@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-var visited = []bool{false, false, false, false, false, false, false, false, false}
+var visited [9]bool
 var graph = [][]int{
 	{},
 	{2, 3, 8},
