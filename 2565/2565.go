@@ -4,60 +4,51 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 )
 
-var (
-	n        int
-	min, max int
-	at       [100]int
-	bt       [100]int
-	cn       [][]int
-)
+var reader *bufio.Reader = bufio.NewReader(os.Stdin)
+var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
 
-func main() {
+func printf(f string, a ...interface{}) { fmt.Fprintf(writer, f, a...) }
+func scanf(f string, a ...interface{})  { fmt.Fscanf(reader, f, a...) }
 
-	var acable, bcable, c int
-	min = 1
-	reader := bufio.NewReader(os.Stdin)
-	writer := bufio.NewWriter(os.Stdout)
-	defer writer.Flush()
-
-	fmt.Fscanln(reader, &c)
-	for i := 1; i <= c; i++ {
-		fmt.Fscanf(reader, "%d %d\n", &acable, &bcable)
-		at[i] = acable
-		bt[i] = bcable
-		if min > acable && acable > bcable {
-			min = acable
-		} else if min > bcable && acable > bcable {
-			min = bcable
-		}
-		if max < acable && acable > bcable {
-			max = acable
-		} else if max < bcable && acable < bcable {
-			max = bcable
-		} else if max < bcable && max < acable && acable == bcable {
-			max = acable
-		}
-	}
-
-	cn = make([][]int, max+1)
-
-	for Atop := min; Atop <= max; Atop++ {
-		comparison(Atop)
-	}
-	fmt.Fprintln(writer, n)
+type Line struct {
+	from int
+	to   int
 }
 
-func comparison(a int) {
-	atop := a
-	btop := at[a]
-	for i := 1; i <= max; i++ {
-		if atop == i {
-			continue
+type Lines []Line
+
+func (l Lines) Len() int           { return len(l) }
+func (l Lines) Swap(i, j int)      { l[i], l[j] = l[j], l[i] }
+func (l Lines) Less(i, j int) bool { return l[i].from < l[j].from }
+
+func main() {
+	var n int
+	scanf("%d\n", &n)
+	lines := make([]Line, n)
+	dp := make([]int, n)
+
+	for i := 0; i < n; i++ {
+		var f, t int
+		scanf("%d %d\n", &f, &t)
+		lines[i] = Line{from: f, to: t}
+		dp[i] = 1
+	}
+	sort.Sort(Lines(lines))
+
+	max := 0
+	for i := 1; i < n; i++ {
+		for j := 0; j < i; j++ {
+			if lines[i].to > lines[j].to && dp[i] < dp[j]+1 {
+				dp[i] = dp[j] + 1
+			}
 		}
-		if atop < i && btop < at[i] || atop > i && btop > at[i] {
-			cn[atop] = append(cn[atop], i)
+		if max < dp[i] {
+			max = dp[i]
 		}
 	}
+	printf("%d\n", n-max)
+	writer.Flush()
 }
