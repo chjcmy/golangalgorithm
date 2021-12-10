@@ -6,47 +6,42 @@ import (
 	"os"
 )
 
-var reader *bufio.Reader = bufio.NewReader(os.Stdin)
-var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
-
-var (
-	houses [][]int
-	bens   []int
-)
+var dp [][]int
 
 func main() {
-	var count, sum int
-	fmt.Fscanln(reader, &count)
-	houses = make([][]int, count)
-	for home := 0; home < count; home++ {
-		var home1, home2, home3 int
-		fmt.Fscanf(reader, "%d %d %d\n", &home1, &home2, &home3)
-		houses[home] = append(houses[home], home1)
-		houses[home] = append(houses[home], home2)
-		houses[home] = append(houses[home], home3)
+	reader := bufio.NewReader(os.Stdin)
+	writer := bufio.NewWriter(os.Stdout)
+
+	var N int
+	fmt.Fscanln(reader, &N)
+
+	dp = make([][]int, N)
+	for i := range dp {
+		dp[i] = make([]int, 3)
 	}
-	for i := range houses {
-		var min int
-		for first := range houses[i] {
-			if first == 0 {
-				bens[0] = first
-				min = houses[i][first]
-				continue
-			}
-			if i != 0 {
-				if bens[i-1] == first {
-					continue
-				}
-			}
-			if houses[i][first-1] > houses[i][first] {
-				min = first
-			}
-		}
-		bens = append(bens, min)
+
+	var R, G, B int
+	for i := 0; i < N; i++ {
+		fmt.Fscanln(reader, &R, &G, &B)
+		dp[i][0], dp[i][1], dp[i][2] = R, G, B
 	}
-	for bus := range bens {
-		sum += bens[bus]
+	for i := 1; i < N; i++ {
+		dp[i][0] += min(dp[i-1][1], dp[i-1][2])
+		dp[i][1] += min(dp[i-1][0], dp[i-1][2])
+		dp[i][2] += min(dp[i-1][0], dp[i-1][1])
 	}
-	fmt.Fprintln(writer, sum)
+
+	fmt.Fprintln(writer, min(dp[N-1][0], dp[N-1][1], dp[N-1][2]))
+
 	writer.Flush()
+}
+
+func min(arr ...int) int {
+	min := 9223372036854775807
+	for _, value := range arr {
+		if min > value {
+			min = value
+		}
+	}
+	return min
 }
