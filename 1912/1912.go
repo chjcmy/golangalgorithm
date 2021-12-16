@@ -22,16 +22,32 @@ func main() {
 
 	dp[0] = stairs[0]
 	dp[1] = Max(dp[0], dp[0]+stairs[1])
-	for i := 2; i < N; i++ {
+	for i := 2; i < N-1; i++ {
 
-		if dp[i-2] >= dp[i-1]+stairs[i] {
-			dp[i] = dp[i-2]
+		if -stairs[i-1] == stairs[i] && -stairs[i] < stairs[i+1] {
+			dp[i] = dp[i-1] + stairs[i]
+			dp[i+1] = dp[i]
+			i++
+			continue
+		}
+		if -stairs[i] > dp[i] || dp[i-1] == stairs[i] {
+			dp[i] = dp[i-1]
 			continue
 		}
 
+		if dp[i-1]+stairs[i] == dp[i] {
+			dp[i+1] = dp[i]
+			i++
+			continue
+		}
+
+		if dp[i-1] > dp[i-1]+stairs[i]+stairs[i+1] {
+			dp[i] = dp[i-2]
+			continue
+		}
 		dp[i] = dp[i-1] + stairs[i]
 	}
-	fmt.Fprintln(writer, Max(dp[N-2], dp[N-2]+stairs[N-1]))
+	fmt.Fprintln(writer, dp)
 	writer.Flush()
 }
 
