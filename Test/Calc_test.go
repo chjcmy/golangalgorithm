@@ -1,15 +1,80 @@
 package Calc
 
-import "testing"
+import (
+	"fmt"
+	"math/rand"
+	"testing"
+)
+
+var ac = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
+var bc = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
+var cc = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
+var dc = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
+var ec = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
+var ic = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
 
 func TestAdd(t *testing.T) {
-	if Add(1, 3) != -2 {
-		t.Errorf("Errors in case 1 : Expected 4, Actual %d", Add(1, 3))
+	cal(10, ac)
+	cal(10, bc)
+	cal(10, cc)
+	cal(10, dc)
+	cal(10, ec)
+	cal(10, ic)
+}
+
+func cal(a int, b []int) {
+	var Max, Min int
+
+	bytonic := b
+
+	var dp []int
+
+	N := a
+
+	dp = make([]int, N)
+
+	for i := 0; i < N; i++ {
+		if Max < bytonic[i] {
+			Max = bytonic[i]
+		}
 	}
-	if Add(1, 0) != 1 {
-		t.Errorf("Errors in case 2 : Expected 2, Actual %d", Add(1, 0))
+
+	Min = bytonic[0]
+
+	for i := 0; i < N; i++ {
+		if Min < bytonic[i] {
+			break
+		}
+		Min = bytonic[i]
+		dp[0]++
 	}
-	if Add(1, -1) != 2 {
-		t.Errorf("Errors in case 3 : Expected 0, Actual %d", Add(1, -1))
+
+	for i := 1; i < N; i++ {
+
+		ultraMax := bytonic[0]
+		ultraMin := bytonic[i]
+		for up := 1; up <= i; up++ {
+			if ultraMax < bytonic[up] {
+				dp[i]++
+			}
+			ultraMax = bytonic[up]
+		}
+		for down := i+1; down < N; down++ {
+			if ultraMin > bytonic[down] {
+				dp[i]++
+			}
+			ultraMin = bytonic[down]
+		}
+		if dp[i-1] > dp[i] {
+			dp[i] = dp[i-1]
+		}
 	}
+	fmt.Println(bytonic)
+	fmt.Println(dp[N-1])
 }

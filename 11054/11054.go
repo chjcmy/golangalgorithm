@@ -10,7 +10,7 @@ var reader *bufio.Reader = bufio.NewReader(os.Stdin)
 var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
 
 func main() {
-	var N, Max int
+	var N, Max, Min int
 
 	var bytonic []int
 
@@ -24,47 +24,45 @@ func main() {
 
 	for i := 0; i < N; i++ {
 		fmt.Fscan(reader, &bytonic[i])
+
 		if Max < bytonic[i] {
 			Max = bytonic[i]
 		}
 	}
 
+	Min = bytonic[0]
+
+	Min = bytonic[0]
+
 	for i := 0; i < N; i++ {
-		min := bytonic[0]
-		if min > bytonic[i] {
+		if Min < bytonic[i] {
 			break
 		}
-
+		Min = bytonic[i]
+		dp[0]++
 	}
 
 	for i := 1; i < N; i++ {
 
-		if bytonic[i] < Max {
-			dp[i] = dp[i-1]
-			continue
-		}
-
-		var ultraMax int
+		ultraMax := bytonic[0]
 		ultraMin := bytonic[i]
-		for up := 0; up < i; up++ {
+		for up := 1; up <= i; up++ {
 			if ultraMax < bytonic[up] {
 				ultraMax = bytonic[up]
 				dp[i]++
-				continue
 			}
 			ultraMax = bytonic[up]
 		}
-		for down := i; down < N; down++ {
-			if ultraMin < bytonic[down] {
-				break
+		for down := i + 1; down < N; down++ {
+			if ultraMin > bytonic[down] {
+				ultraMin = bytonic[down]
+				dp[i]++
 			}
-			ultraMin = bytonic[down]
-			dp[i]++
 		}
 		if dp[i-1] > dp[i] {
 			dp[i] = dp[i-1]
 		}
 	}
-	fmt.Fprintln(writer, dp[N-1])
+	fmt.Fprintln(writer, dp[N-1]+1)
 	writer.Flush()
 }
