@@ -9,43 +9,62 @@ import (
 var reader *bufio.Reader = bufio.NewReader(os.Stdin)
 var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
 
-type dp struct {
-	min int
-	max int
-}
-
 func main() {
-	var N int
+	var N, Max int
 
 	var bytonic []int
+
+	var dp []int
 
 	fmt.Fscanln(reader, &N)
 
 	bytonic = make([]int, N)
-	deep := make([]dp, N)
+
+	dp = make([]int, N)
 
 	for i := 0; i < N; i++ {
 		fmt.Fscan(reader, &bytonic[i])
-		deep[i].max, deep[i].min = bytonic[i], bytonic[i]
+		if Max < bytonic[i] {
+			Max = bytonic[i]
+		}
 	}
 
 	for i := 0; i < N; i++ {
-		M := 0
-		max := bytonic[i] - 1
-		min := bytonic[i] - 1
-		for up := 0; up < i; up++ {
-			if bytonic[up] < max && max < bytonic[i] {
-				max = bytonic[up]
-				M++
-			}
+		min := bytonic[0]
+		if min > bytonic[i] {
+			break
 		}
-		for down := i; down < N; down++ {
-			if bytonic[down] > min && min < bytonic[i] {
-				min = bytonic[down]
-				M++
-			}
-		}
-		dp[i] = M
+
 	}
 
+	for i := 1; i < N; i++ {
+
+		if bytonic[i] < Max {
+			dp[i] = dp[i-1]
+			continue
+		}
+
+		var ultraMax int
+		ultraMin := bytonic[i]
+		for up := 0; up < i; up++ {
+			if ultraMax < bytonic[up] {
+				ultraMax = bytonic[up]
+				dp[i]++
+				continue
+			}
+			ultraMax = bytonic[up]
+		}
+		for down := i; down < N; down++ {
+			if ultraMin < bytonic[down] {
+				break
+			}
+			ultraMin = bytonic[down]
+			dp[i]++
+		}
+		if dp[i-1] > dp[i] {
+			dp[i] = dp[i-1]
+		}
+	}
+	fmt.Fprintln(writer, dp[N-1])
+	writer.Flush()
 }
