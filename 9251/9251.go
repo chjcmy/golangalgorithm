@@ -10,46 +10,51 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	writer := bufio.NewWriter(os.Stdout)
 
-	var A, B []rune
+	var A, B = "0", "0"
 
-	var S string
+	var C string
 
 	var dp [][]int
 
-	fmt.Fscanln(reader, &S)
+	fmt.Fscanln(reader, &C)
 
-	A = append(A, 0)
+	A += C
 
-	A = append(A, []rune(S)...)
+	fmt.Fscanln(reader, &C)
 
-	dp = make([][]int, len(A))
+	B += C
 
-	fmt.Fscanln(reader, &S)
+	alen := len(A)
 
-	B = append(B, 0)
+	blen := len(B)
 
-	B = append(B, []rune(S)...)
+	dp = make([][]int, alen)
 
-	for i := 0; i < len(A); i++ {
-		for j := 0; j < len(B); j++ {
-			dp[i] = make([]int, len(B))
+	for i := 0; i < alen; i++ {
+		for j := 0; j < blen; j++ {
+			dp[i] = make([]int, blen)
 		}
 	}
 
-	for i := 1; i < len(A); i++ {
-		for j := i; j < len(B); j++ {
-			if A[i] == B[j] {
-				dp[i][j]++
+	for i := 1; i < alen; i++ {
+		for j := 1; j < blen; j++ {
+			if A[i:i+1] == B[j:j+1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+				continue
 			}
-			dp[i][j] += dp[i][j-1]
-		}
-		if dp[i-1][len(B)-1] > dp[i][len(B)-1] {
-			dp[i][len(B)-1] = dp[i-1][len(B)-1]
+			dp[i][j] = max(dp[i-1][j], dp[i][j-1])
 		}
 	}
 
-	fmt.Fprintln(writer, dp[len(A)-1][len(B)-1])
+	fmt.Fprintln(writer, dp[alen-1][blen-1])
 
 	writer.Flush()
 
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
