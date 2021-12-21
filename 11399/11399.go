@@ -13,9 +13,9 @@ func main() {
 
 	var N int
 
-	fmt.Fscanln(reader, &N)
-
 	var grid []int
+
+	fmt.Fscanln(reader, &N)
 
 	grid = make([]int, N+1)
 
