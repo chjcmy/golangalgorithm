@@ -11,11 +11,11 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	writer := bufio.NewWriter(os.Stdout)
 
-	var N, SUM int
-
-	var grid []int
+	var N int
 
 	fmt.Fscanln(reader, &N)
+
+	var grid []int
 
 	grid = make([]int, N+1)
 
@@ -27,10 +27,10 @@ func main() {
 
 	for i := 1; i <= N; i++ {
 		grid[i] = grid[i] + grid[i-1]
-		SUM = grid[i] + SUM
+		grid[0] = grid[i] + grid[0]
 	}
 
-	fmt.Fprintln(writer, SUM)
+	fmt.Fprintln(writer, grid[0])
 
 	writer.Flush()
 }
