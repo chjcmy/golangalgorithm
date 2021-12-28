@@ -6,40 +6,30 @@ import (
 	"os"
 )
 
-var (
-	maps [][]graph
-)
-
-type graph struct {
-	u int
-	v int
-}
-
 func main() {
-	reader := bufio.NewReader(os.Stdin)
 	writer := bufio.NewWriter(os.Stdout)
 
-	var N, M, Start int
-
-	fmt.Fscanf(reader, "%d %d\n", &N, &M)
-
-	maps = make([][]graph, M+1)
-
-	fmt.Fscanln(reader, Start)
-
-	for i := 0; i <= M; i++ {
-		var u, v, w int
-		fmt.Fscanf(reader, "%d %d %d\n", &u, &v, &w)
-
-		maps[u] = append(maps[u], graph{v, w})
+	for num1 := 1; num1 < 10; num1++ {
+		if num1 == 8 {
+			continue
+		}
+		fmt.Fprintf(writer, "2 * %d = %d  3 * %d = %d 4 * %d = %d 5 * %d = %d \n",
+			num1, 2*num1, num1, 3*num1, num1, 4*num1, num1, 5*num1)
+	}
+	fmt.Fprintln(writer)
+	for num1 := 1; num1 < 10; num1++ {
+		if num1 == 8 {
+			continue
+		}
+		fmt.Fprintf(writer, "6 * %d = %d  7 * %d = %d 8 * %d = %d 9 * %d = %d \n",
+			num1, 6*num1, num1, 7*num1, num1, 8*num1, num1, 9*num1)
 	}
 
-	for i := 0; i < M; i++ {
-		fmt.Fprintln(writer, maps[i])
-	}
-
-	//for i := 0; i < M; i++ {
-	//
-	//}
 	writer.Flush()
+}
+
+func swap(p, q int) {
+	oldP := p
+	p = q
+	q = oldP
 }

@@ -1,23 +1,25 @@
 package Calc
 
 import (
+	"bufio"
 	"fmt"
 	"math/rand"
+	"os"
 	"testing"
 )
 
-var ac = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
-	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
-var bc = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
-	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
-var cc = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
-	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
-var dc = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
-	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
-var ec = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
-	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
-var ic = []int{rand.Intn(20),rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
-	rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20),rand.Intn(20)}
+var ac = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20)}
+var bc = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20)}
+var cc = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20)}
+var dc = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20)}
+var ec = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20)}
+var ic = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
+	rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20)}
 
 func TestAdd(t *testing.T) {
 	cal(10, ac)
@@ -28,53 +30,24 @@ func TestAdd(t *testing.T) {
 	cal(10, ic)
 }
 
-func cal(a int, b []int) {
-	var Max, Min int
+func main() {
+	writer := bufio.NewWriter(os.Stdout)
 
-	bytonic := b
-
-	var dp []int
-
-	N := a
-
-	dp = make([]int, N)
-
-	for i := 0; i < N; i++ {
-		if Max < bytonic[i] {
-			Max = bytonic[i]
+	for num1 := 1; num1 < 10; num1++ {
+		if num1 == 8 {
+			continue
 		}
+		fmt.Fprintf(writer, "2 * %d = %d  3 * %d = %d 4 * %d = %d 5 * %d = %d \n",
+			num1, 2*num1, num1, 3*num1, num1, 4*num1, num1, 5*num1)
+	}
+	fmt.Fprintln(writer)
+	for num1 := 1; num1 < 10; num1++ {
+		if num1 == 8 {
+			continue
+		}
+		fmt.Fprintf(writer, "6 * %d = %d  7 * %d = %d 8 * %d = %d 9 * %d = %d \n",
+			num1, 6*num1, num1, 7*num1, num1, 8*num1, num1, 9*num1)
 	}
 
-	Min = bytonic[0]
-
-	for i := 0; i < N; i++ {
-		if Min < bytonic[i] {
-			break
-		}
-		Min = bytonic[i]
-		dp[0]++
-	}
-
-	for i := 1; i < N; i++ {
-
-		ultraMax := bytonic[0]
-		ultraMin := bytonic[i]
-		for up := 1; up <= i; up++ {
-			if ultraMax < bytonic[up] {
-				dp[i]++
-			}
-			ultraMax = bytonic[up]
-		}
-		for down := i+1; down < N; down++ {
-			if ultraMin > bytonic[down] {
-				dp[i]++
-			}
-			ultraMin = bytonic[down]
-		}
-		if dp[i-1] > dp[i] {
-			dp[i] = dp[i-1]
-		}
-	}
-	fmt.Println(bytonic)
-	fmt.Println(dp[N-1])
+	writer.Flush()
 }
