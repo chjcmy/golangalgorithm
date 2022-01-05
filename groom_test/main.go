@@ -6,25 +6,35 @@ import (
 	"time"
 )
 
-func add(a *int, b *int, result *int, w *sync.WaitGroup) {
-	defer w.Done()
-	time.Sleep(time.Second)
+var mutex sync.Mutex
 
-	*result = *a + *b
+type Account struct {
+	Balance int
+}
 
+func DepositAndWithdraw(account *Account) {
+	mutex.Lock()
+	defer mutex.Unlock()
+	if account.Balance < 0 {
+		panic(fmt.Sprintf("Balance sould not be negative value : &d", account.Balance))
+	}
+	account.Balance += 1000
+	time.Sleep(time.Millisecond)
+	account.Balance -= 1000
 }
 
 func main() {
-	var num1, num2 int = 10, 5
-	var result int
+	var wg sync.WaitGroup
 
-	wait := sync.WaitGroup{}
-
-	wait.Add(1)
-
-	go add(&num1, &num2, &result, &wait)
-
-	wait.Wait()
-
-	fmt.Println(result)
+	account := &Account{0}
+	wg.Add(10)
+	for i := 0; i < 10; i++ {
+		go func() {
+			for {
+				DepositAndWithdraw(account)
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
 }
