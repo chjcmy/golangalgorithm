@@ -1,57 +1,30 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+	"time"
+)
 
-func inputSubNum() (num int, err error) {
+func add(a *int, b *int, result *int, w *sync.WaitGroup) {
+	defer w.Done()
+	time.Sleep(time.Second)
 
-	fmt.Scanln(&num)
+	*result = *a + *b
 
-	if num <= 0 {
-		return 0, fmt.Errorf("잘못된 과목 수입니다.")
-	}
-	return
-}
-
-func average(num int) (avg float64, err error) {
-	var score, total int
-
-	for i := 0; i < num; i++ {
-		fmt.Scanln(&score)
-
-		if score < 0 || score > 100 {
-			return 0, fmt.Errorf("잘못된 점수입니다.")
-		}
-
-		total += score
-
-	}
-
-	avg = float64(total) / float64(num)
-
-	return
 }
 
 func main() {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println(r)
-		}
-	}()
+	var num1, num2 int = 10, 5
+	var result int
 
-	num, err := inputSubNum()
+	wait := sync.WaitGroup{}
 
-	if err != nil {
-		panic(err)
-		return
-	}
+	wait.Add(1)
 
-	result, err := average(num)
+	go add(&num1, &num2, &result, &wait)
 
-	if err != nil {
-		panic(err)
-		return
-	}
+	wait.Wait()
 
 	fmt.Println(result)
-
 }
