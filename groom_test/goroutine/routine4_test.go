@@ -7,38 +7,64 @@ import (
 	"time"
 )
 
-func square3(wg *sync.WaitGroup, ch chan int) {
+type Car struct {
+	Body  string
+	Tire  string
+	Color string
+}
 
+var wg sync.WaitGroup
+var startTime = time.Now()
+
+func TestRoutine4(t *testing.T) {
+	tirech := make(chan *Car)
+	paintch := make(chan *Car)
+
+	fmt.Printf("Start Factory\n")
+
+	wg.Add(3)
+	go MakeBody(tirech)
+	go InstallTire(tirech, paintch)
+	go PaintCar(paintch)
+
+	wg.Wait()
+	fmt.Println("Close the factory")
+}
+
+func MakeBody(tireCh chan *Car) {
 	tick := time.Tick(time.Second)
-	terminate := time.After(10 * time.Second)
-
+	after := time.After(10 * time.Second)
 	for {
 		select {
 		case <-tick:
-			fmt.Println("tick")
-			time.Sleep(time.Second)
-		case <-terminate:
-			fmt.Println("terminated")
+			car := &Car{}
+			car.Body = "Sports car"
+			tireCh <- car
+		case <-after:
+			close(tireCh)
 			wg.Done()
 			return
-		case n := <-ch:
-			fmt.Printf("Square: %d\n", n*n)
-			time.Sleep(time.Second)
 		}
 
 	}
 }
 
-func TestRoutine4(t *testing.T) {
-	var wg sync.WaitGroup
-	ch := make(chan int)
-
-	wg.Add(1)
-	go square3(&wg, ch)
-
-	for i := 0; i < 10; i++ {
-		ch <- i * 2
+func InstallTire(tirech, paintch chan *Car) {
+	for car := range tirech {
+		time.Sleep(time.Second)
+		car.Tire = "Winter tire"
+		paintch <- car
 	}
+	wg.Done()
+	close(paintch)
+}
 
-	wg.Wait()
+func PaintCar(paintch chan *Car) {
+	for car := range paintch {
+		time.Sleep(time.Second)
+		car.Color = "Red"
+		duration := time.Now().Sub(startTime)
+		fmt.Printf("%.4f Complete Car: %s %s %s\n", duration.Seconds(), car.Body, car.Tire, car.Body)
+	}
+	wg.Done()
 }
