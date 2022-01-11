@@ -41,4 +41,9 @@ func TestSolid1(t *testing.T) {
 	Ei := new(EmailReport)
 	Ei.Email = "ooo@goolgle.com"
 	Si.SendReport(Ei)
+
+}
+
+func f(x int) int {
+	return x * 2
 }
