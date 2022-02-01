@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"testing"
 )
 
 var ac = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
@@ -21,14 +20,14 @@ var ec = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.
 var ic = []int{rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20),
 	rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20), rand.Intn(20)}
 
-func TestAdd(t *testing.T) {
-	cal(10, ac)
-	cal(10, bc)
-	cal(10, cc)
-	cal(10, dc)
-	cal(10, ec)
-	cal(10, ic)
-}
+//func TestAdd(t *testing.T) {
+//	cal(10, ac)
+//	cal(10, bc)
+//	cal(10, cc)
+//	cal(10, dc)
+//	cal(10, ec)
+//	cal(10, ic)
+//}
 
 func main() {
 	writer := bufio.NewWriter(os.Stdout)
