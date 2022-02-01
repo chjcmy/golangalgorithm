@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var mapss [][]int
+
 func main() {
 
 	var xLay, yLay int
