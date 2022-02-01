@@ -2,184 +2,94 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
-	"strings"
+	"strconv"
 )
 
 var (
-	maps  [][]string
-	graph [][]int
-	X, Y  int
-	hint  = 1
-	stack []s
+	sc      *bufio.Scanner
+	wr      *bufio.Writer
+	N, M    int
+	visited [1000][1000][2]bool
+	arr     [1000][1000]int
+	dx, dy  [4]int
+	q       []status
 )
 
-type s struct {
-	X int
-	Y int
+func init() {
+	sc = bufio.NewScanner(os.Stdin)
+	sc.Split(bufio.ScanWords)
+	wr = bufio.NewWriter(os.Stdout)
+	dx = [4]int{0, 1, 0, -1}
+	dy = [4]int{1, 0, -1, 0}
+}
+
+type status struct {
+	index
+	cnt int
+	brk int
+}
+
+type index struct {
+	y, x int
 }
 
 func main() {
-	reader := bufio.NewReader(os.Stdin)
-	writer := bufio.NewWriter(os.Stdout)
-
-	var S string
-
-	var sum int
-
-	fmt.Fscanf(reader, "%d %d\n", &Y, &X)
-
-	maps = make([][]string, Y)
-
-	for i := 0; i < Y; i++ {
-		maps[i] = make([]string, X)
-	}
-
-	graph = make([][]int, Y)
-
-	for i := 0; i < Y; i++ {
-		graph[i] = make([]int, X)
-	}
-
-	for i := 0; i < Y; i++ {
-		fmt.Fscanln(reader, &S)
-		maps[i] = strings.Split(S, "")
-	}
-
-	stack = append(stack, s{0, 0})
-
-	graph[0][0] = 1
-
-	for stack[len(stack)-1].Y != Y-1 && stack[len(stack)-1].X != X-1 || len(stack) != 0 {
-
-		n := len(stack) - 1
-
-		beforeY := stack[n].Y
-		beforeX := stack[n].X
-		if beforeX+1 < X && maps[beforeY][beforeX+1] == "0" && hint >= 0 && graph[beforeY][beforeX+1] == 0 {
-			sum++
-			graph[beforeY][beforeX+1] = 1
-			stack = append(stack, s{beforeX + 1, beforeY})
-			continue
-		}
-		if beforeY+1 < Y && maps[beforeY+1][beforeX] == "0" && hint >= 0 && graph[beforeY+1][beforeX] == 0 {
-			sum++
-			graph[beforeY+1][beforeX] = 1
-			stack = append(stack, s{beforeX, beforeY + 1})
-			continue
-		}
-		if beforeX+1 < X && maps[beforeY][beforeX+1] == "1" && hint == 1 && graph[beforeY][beforeX+1] == 0 {
-			hint--
-			sum++
-			graph[beforeY][beforeX+1] = 1
-			stack = append(stack, s{beforeX + 1, beforeY})
-			continue
-		}
-		if beforeY+1 < Y && maps[beforeY+1][beforeX] == "1" && hint == 1 && graph[beforeY+1][beforeX] == 0 {
-			hint--
-			sum++
-			graph[beforeY+1][beforeX] = 1
-			stack = append(stack, s{beforeX, beforeY + 1})
-			continue
-		}
-		if beforeY-1 >= 0 && maps[beforeY-1][beforeX] == "0" && hint >= 0 && graph[beforeY-1][beforeX] == 0 {
-			sum++
-			graph[beforeY-1][beforeX] = 1
-			stack = append(stack, s{beforeX, beforeY - 1})
-			continue
-		}
-		if beforeX-1 >= 0 && maps[beforeY][beforeX-1] == "0" && hint >= 0 && graph[beforeY][beforeX-1] == 0 {
-			sum++
-			graph[beforeY][beforeX-1] = 1
-			stack = append(stack, s{beforeX - 1, beforeY})
-			continue
-		}
-		if beforeY-1 < Y && maps[beforeY-1][beforeX] == "1" && hint == 1 && graph[beforeY-1][beforeX] == 0 {
-			hint--
-			sum++
-			graph[beforeY-1][beforeX] = 1
-			stack = append(stack, s{beforeX, beforeY - 1})
-			continue
-		}
-		if beforeX-1 > 0 && maps[beforeY][beforeX-1] == "1" && hint == 1 && graph[beforeY][beforeX-1] == 0 {
-			hint--
-			sum++
-			graph[beforeY][beforeX-1] = 1
-			stack = append(stack, s{beforeX - 1, beforeY})
-			continue
-		}
-		if beforeX < X || beforeX-1 >= 0 || beforeY < Y || beforeY >= 0 ||
-			maps[beforeY][beforeX+1] == "1" || maps[beforeY][beforeX-1] == "1" ||
-			maps[beforeY+1][beforeX] == "1" || maps[beforeY-1][beforeX] == "1" {
-			sum--
-			stack = remove(stack, n)
-			if hint == 0 && maps[beforeY][beforeX] == "1" {
-				hint++
-			}
-			if hint == 0 && maps[beforeY][beforeX] == "0" {
-				sum = -1
-				break
-			}
-			continue
+	defer wr.Flush()
+	N = scanInt()
+	M = scanInt()
+	for i := 0; i < N; i++ {
+		sc.Scan()
+		for j, x := range sc.Bytes() {
+			arr[i][j] = int(x - '0')
 		}
 	}
-	fmt.Fprintln(writer, sum)
-
-	writer.Flush()
+	wr.WriteString(strconv.Itoa(bfs()))
 }
 
-func remove(s []s, i int) []s {
-	s[i] = s[len(s)-1]
-	return s[:len(s)-1]
+func bfs() int {
+	q = append(q, status{index{0, 0}, 1, 0})
+	for len(q) > 0 {
+		tmp := q[0]
+		q = q[1:]
+		y := tmp.index.y
+		x := tmp.index.x
+		if y == N-1 && x == M-1 {
+			return tmp.cnt
+		}
+		for i := 0; i < 4; i++ {
+			newY := y + dy[i]
+			newX := x + dx[i]
+			if !check(newY, newX) {
+				continue
+			}
+			if arr[newY][newX] == 1 && tmp.brk == 0 && !visited[newY][newX][1] {
+				visited[newY][newX][1] = true
+				q = append(q, status{index{newY, newX}, tmp.cnt + 1, 1})
+			}
+			if arr[newY][newX] == 0 && !visited[newY][newX][tmp.brk] {
+				visited[newY][newX][tmp.brk] = true
+				q = append(q, status{index{newY, newX}, tmp.cnt + 1, tmp.brk})
+			}
+		}
+	}
+	return -1
 }
 
-//func normalMove(y, x, sum int) int {
-//
-//	if graph[X-1][Y-1] > 0 {
-//		stack = stack
-//		return sum
-//	}
-//	if y-1 > 0 && x-1 > 0 && maps[y-1][x-1] == "0" && hint >= 0 {
-//		normalMove(y-1, x-1, sum+1)
-//	}
-//	if y+1 < Y && x+1 < X && maps[y+1][x+1] == "0" && hint >= 0 {
-//		normalMove(y+1, x+1, sum+1)
-//	}
-//	if y-1 > 0 && x+1 < X && maps[y-1][x+1] == "0" && hint >= 0 {
-//		normalMove(y-1, x+1, sum+1)
-//	}
-//	if y+1 < Y && x-1 > 0 && maps[y+1][x-1] == "0" && hint >= 0 {
-//		normalMove(y+1, x-1, sum+1)
-//	}
-//	if y+1 < Y && x+1 < X && maps[y+1][x+1] == "1" && hint >= 1 {
-//		hintMove(y+1, x+1, sum+1)
-//	}
-//	if y-1 >= 0 && x-1 >= 0 && maps[y-1][x-1] == "1" && hint >= 1 {
-//		hintMove(y-1, x-1, sum+1)
-//	}
-//	if y-1 >= 0 && x+1 < X && maps[y-1][x+1] == "1" && hint >= 1 {
-//		hintMove(y-1, x+1, sum+1)
-//	}
-//	if y+1 < Y && x-1 >= 0 && maps[y+1][x-1] == "1" && hint >= 1 {
-//		hintMove(y+1, x-1, sum+1)
-//	}
-//	return -1
-//}
-//
-//func hintMove(y, x, sum int) {
-//	hint--
-//
-//	if y-1 > 0 && x-1 > 0 && maps[y-1][x-1] == "0" && hint >= 0 {
-//		normalMove(y-1, x-1, sum+1)
-//	}
-//	if y-1 > 0 && x+1 < X && maps[y-1][x+1] == "0" && hint >= 0 {
-//		normalMove(y-1, x+1, sum+1)
-//	}
-//	if y+1 < Y && x+1 < X && maps[y-1][x+1] == "0" && hint >= 0 {
-//		normalMove(y+1, x+1, sum+1)
-//	}
-//	if y+1 < Y && x-1 > 0 && maps[y-1][x+1] == "0" && hint >= 0 {
-//		normalMove(y+1, x-1, sum+1)
-//	}
-//}
+func check(i, j int) bool {
+	if i < 0 || i >= N || j < 0 || j >= M {
+		return false
+	} else {
+		return true
+	}
+}
+
+func scanInt() (n int) {
+	sc.Scan()
+	n = 0
+	for _, i := range sc.Bytes() {
+		n *= 10
+		n += int(i - '0')
+	}
+	return
+}

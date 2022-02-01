@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -18,17 +19,26 @@ func main() {
 
 	fmt.Fscanf(reader, "%d %d\n", &xLay, &yLay)
 
-	maps := make([][]string, xLay)
+	maps := make([][]int, xLay)
 
 	for i := 0; i < len(maps); i++ {
-		maps[i] = make([]string, yLay)
+		maps[i] = make([]int, yLay)
 	}
 
 	for i := 0; i < len(maps); i++ {
 		var S string
 		fmt.Fscanln(reader, &S)
+		values := strings.Split(S, "")
+		maps[i] = scanconv(values)
 
-		maps[i] = strings.Split(S, "")
 	}
 	fmt.Fprintln(writer, maps)
+}
+
+func scanconv(strs []string) (val []int) {
+	for _, raw := range strs {
+		n, _ := strconv.Atoi(raw)
+		val = append(val, n)
+	}
+	return
 }
