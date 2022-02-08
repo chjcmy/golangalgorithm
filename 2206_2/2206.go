@@ -22,9 +22,14 @@ func main() {
 	fmt.Fscanf(reader, "%d %d\n", &xLay, &yLay)
 
 	maps := make([][]int, xLay)
+	boolMaps := make([][]bool, xLay)
 
 	for i := 0; i < len(maps); i++ {
 		maps[i] = make([]int, yLay)
+	}
+
+	for i := 0; i < len(maps); i++ {
+		boolMaps[i] = make([]bool, yLay)
 	}
 
 	for i := 0; i < len(maps); i++ {
@@ -32,7 +37,6 @@ func main() {
 		fmt.Fscanln(reader, &S)
 		values := strings.Split(S, "")
 		maps[i] = scanconv(values)
-
 	}
 	fmt.Fprintln(writer, maps)
 }
