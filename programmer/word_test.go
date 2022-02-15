@@ -5,67 +5,56 @@ import (
 	"testing"
 )
 
-var (
-	word       []string
-	result2    int
-	targetting string
-)
-
 func TestWord(t *testing.T) {
 
-	word = []string{"hot", "dot", "dog", "lot", "log", "cog"}
+	word1 := []string{"hot", "dot", "dog", "lot", "log", "cog"}
+	word2 := []string{"hot", "dot", "dog", "lot", "log"}
 
-	fmt.Println(hitting("hit", "cog", word))
+	fmt.Println(hitting("hit", "cog", word1))
+	fmt.Println(hitting("hit", "cog", word2))
 }
 
 func hitting(begin string, target string, words []string) int {
 
-	var inside bool
-
-	word = words
-
-	targetting = target
-
-	for i := 0; i < len(words); i++ {
-		if targetting == words[i] {
-			inside = true
+	found := false
+	wordLength := make(map[string]int)
+	stack := make([]string, 0)
+	for _, word := range words {
+		if word == target {
+			found = true
 		}
+		wordLength[word] = -1
 	}
-
-	if !inside {
+	if !found {
 		return 0
 	}
+	wordLength[begin] = 0
 
-	for i := 0; i < len(word[0]); i++ {
-		var diff int
-		if begin[i] != word[0][i] {
-			diff++
-			if diff > 1 {
-				return 0
+	stack = append(stack, begin)
+	for len(stack) > 0 {
+		cur := stack[0]
+		stack = stack[1:]
+		length := wordLength[cur] + 1
+
+		for _, word := range words {
+			if wordLength[word] >= 0 {
+				continue
+			}
+			cnt := 0
+			for idx := range cur {
+				if word[idx] != cur[idx] {
+					cnt++
+				}
+			}
+			if cnt == 1 {
+				if word == target {
+					return length
+				} else {
+					wordLength[word] = length
+					stack = append(stack, word)
+				}
 			}
 		}
 	}
-
-	hitdfs(0, word[0])
-
-	return result2
-}
-
-func hitdfs(value int, remind string) {
-
-	var diff int
-
-	for i := 0; i < len(word[value+1]); i++ {
-		if remind[i] != word[value+1][i] {
-			if diff > 1 {
-				remind = word[value]
-			}
-			diff++
-		}
-	}
-	if word[value] == targetting {
-		return
-	}
-	result2++
-	hitdfs(value+1, remind)
+	return 0
 }
