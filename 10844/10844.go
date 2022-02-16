@@ -24,6 +24,9 @@ func main() {
 			dp[i][j] = (dp[i-1][j-1] + dp[i-1][j+1]) % 1000000000
 		}
 	}
+
+	fmt.Print("")
+
 	for i := 0; i < 10; i++ {
 		count += dp[N-1][i]
 	}
