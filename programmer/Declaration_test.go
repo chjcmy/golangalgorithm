@@ -30,38 +30,28 @@ func TestDeclaration(t *testing.T) {
 
 func Declarationsolution(id_list []string, report []string, k int) []int {
 
-	m := make(map[string][]string)
+	a := map[string]map[string]bool{}
+	var r = make([]int, len(id_list))
 
-	result2 := make([]int, len(id_list))
-
-	for i := 0; i < len(report); i++ {
-		values := strings.Split(report[i], " ")
-
-		if len(m[values[1]]) > 0 {
-			for _, s := range m[values[1]] {
-				if s != values[0] {
-					m[values[1]] = append(m[values[1]], values[0])
-				}
-			}
-		} else {
-			m[values[1]] = append(m[values[1]], values[0])
+	for _, v := range report {
+		c := strings.Split(v, " ")
+		if _, ok := a[c[1]]; !ok {
+			a[c[1]] = make(map[string]bool)
 		}
-
+		a[c[1]][c[0]] = true
 	}
 
-	for i := 0; i < len(id_list); i++ {
-		if len(m[id_list[i]]) >= k {
-			for _, s := range m[id_list[i]] {
-				for y, i3 := range id_list {
-					if i3 == s {
-						result2[y]++
-						break
+	for _, v := range a {
+		if len(v) > k-1 {
+			for k, _ := range v {
+				for i, n := range id_list {
+					if n == k {
+						r[i]++
 					}
 				}
 			}
-
 		}
 	}
 
-	return result2
+	return r
 }
