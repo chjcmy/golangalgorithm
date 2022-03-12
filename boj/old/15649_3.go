@@ -22,5 +22,5 @@ func main() {
 
 	n15649(0)
 
-	w.Flush()
+	w1.Flush()
 }
