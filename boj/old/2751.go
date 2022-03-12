@@ -7,13 +7,13 @@ import (
 	"sort"
 )
 
-var writer = bufio.NewWriter(os.Stdout)
 var reader = bufio.NewReader(os.Stdin)
 
 func printf(f string, a ...interface{}) { _, _ = fmt.Fprintf(writer, f, a...) }
 func scanf(f string, a ...interface{})  { _, _ = fmt.Fscanf(reader, f, a...) }
 
 func main() {
+	var writer = bufio.NewWriter(os.Stdout)
 	defer writer.Flush()
 	var n int
 
