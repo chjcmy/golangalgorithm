@@ -1,4 +1,4 @@
-package Test
+package retime_test
 
 import (
 	"fmt"
